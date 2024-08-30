@@ -74,15 +74,15 @@ const loginUser = asyncHandler( async (req, res) => {
 
   // find the user in db
   const user = await User.findOne({
-    $or: [{ username }, { password }]
+    $or: [{ username }, { email }]
   })
   if(!user){
     throw new ApiError(404, "user does not exist")
   }
 
   // password check
-  const isPassValid = user.isPasswordCorrect(password);
-  if(isPassValid){
+  const isPassValid = await user.isPasswordCorrect(password);
+  if(!isPassValid){
     throw new ApiError(401, "Invalid Login Credentials")
   }
 
