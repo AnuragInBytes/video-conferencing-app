@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom'
 
-function Home() {
+function HomePage() {
   const navigate = useNavigate()
   return (
     <div>
@@ -25,4 +25,4 @@ function Home() {
   )
 }
 
-export default Home
+export default HomePage
