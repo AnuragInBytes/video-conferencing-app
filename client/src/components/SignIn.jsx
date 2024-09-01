@@ -14,7 +14,7 @@ const schema = z.object({
 
 function SignIn() {
   const navaigate = useNavigate();
-  
+
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema)
   });
@@ -23,7 +23,6 @@ function SignIn() {
     try {
       const response = await api.post('/users/login', data);
       navaigate('/');
-      console.log(response);
     } catch (error) {
       if(error.response && error.response.data) {
         setError("root.serverError", {
