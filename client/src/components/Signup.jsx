@@ -25,6 +25,7 @@ function Signup() {
       // console.log(data);
       const response = await api.post('/users/register', data);
       console.log("Registration is successful", response)
+      console.log(response.data);
       navigate('/signin')
     } catch (error) {
       if(error.response || error.response.data){

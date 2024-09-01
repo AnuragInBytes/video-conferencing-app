@@ -21,5 +21,5 @@ export default function ProtectedRoute({
     setLoading(false);
 
   }, [isAuthenticated, navigate, authentication])
-  return loader ? <h4>Loading...</h4> : <>{children}</>
+  return loading ? <h4>Loading...</h4> : <>{children}</>
 }

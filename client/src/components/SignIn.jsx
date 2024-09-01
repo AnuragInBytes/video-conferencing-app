@@ -5,7 +5,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux'
+import { login as loginSlice } from '../redux/slices/authSlice';
 
 const schema = z.object({
   email: z.string().min(1, { message: "This is required" } ).email({ message: 'Must be a valid email' }),
@@ -14,6 +15,7 @@ const schema = z.object({
 
 function SignIn() {
   const navaigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema)
@@ -22,6 +24,13 @@ function SignIn() {
   const onSubmit = async(data) => {
     try {
       const response = await api.post('/users/login', data);
+      console.log(response.data)
+      dispatch(loginSlice({
+        userData: response.data.user,
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        isAuthenticated: true,
+      }))
       navaigate('/');
     } catch (error) {
       if(error.response && error.response.data) {

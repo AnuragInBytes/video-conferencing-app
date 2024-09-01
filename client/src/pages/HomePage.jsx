@@ -15,7 +15,7 @@ function HomePage() {
           <div className='ml-7'>
             <h2 className='text-7xl px-5 py-6 font-bold ml-8'>Supercharge your meetings and made it effective</h2>
             <p className='text-lg px-7 pt-6 pb-12 ml-8 text-gray-600'>Experience the future of the vertual communication today. <br /> Say hello to a whole new way of connecting</p>
-            <button className='ml-14 px-10 bg-blue-500 py-5 rounded-full text-white font-bold text-xl cursor-pointer hover:bg-blue-600 transition-all' onClick={() => navigate('/signup')}>Start Meeting now</button>
+            <button className='ml-14 px-10 bg-blue-500 py-5 rounded-full text-white font-bold text-xl cursor-pointer hover:bg-blue-600 transition-all' onClick={() => navigate('/lobby')}>Start Meeting now</button>
           </div>
         </div>
         {/* right side */}
