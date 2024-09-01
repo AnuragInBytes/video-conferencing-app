@@ -8,7 +8,7 @@ const Input = forwardRef(function Input({
 }, ref ){
   const id = useId();
   return (
-    <div>
+    <div className='mt-8'>
       {
         label && <label
         className='inline-block mb-1 pl-1'

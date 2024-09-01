@@ -1,8 +1,8 @@
 import React from 'react'
-import Logo from './Logo'
+import { Logo } from './index'
 import { Link, useNavigate } from 'react-router-dom'
 
-function Header() {
+export default function Header() {
   const navigate = useNavigate()
   const navItems = [
     {
@@ -31,7 +31,7 @@ function Header() {
     <header className='h-[6.5rem] w-full'>
       <nav className='flex items-center h-full justify-between'>
 
-        <div className='ml-8 px-5'>
+        <div className='ml-8 px-5 mt-4'>
           <Link to='/'>
             <Logo />
           </Link>
@@ -53,11 +53,9 @@ function Header() {
 
         <div className='mr-8 px-5'>
           <button onClick={() => navigate('/signup')} className='px-9 py-3 text-blue-700 font-semibold bg-white border-2 rounded-full border-blue-500 cursor-pointer hover:bg-blue-500 hover:text-white transition-all'>SignUp</button>
-          <button onClick={() => navigate('/login')} className='ml-3 px-9 py-3 bg-blue-500 border-2 border-blue-500 rounded-full font-semibold text-white hover:bg-white hover:text-blue-700 transition-all cursor-pointer'>Login</button>
+          <button onClick={() => navigate('/signin')} className='ml-3 px-9 py-3 bg-blue-500 border-2 border-blue-500 rounded-full font-semibold text-white hover:bg-white hover:text-blue-700 transition-all cursor-pointer'>Login</button>
         </div>
       </nav>
     </header>
   )
 }
-
-export default Header

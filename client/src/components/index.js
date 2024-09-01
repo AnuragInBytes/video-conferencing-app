@@ -1,16 +1,14 @@
-import Header from "./Header";
-import Logo from "./shared/Logo";
 import Signup from "./Signup"
-import Login from "./Login"
-import Button from "./shared/Butto";
-import Input from "./shared/Input";
+import SignIn from "./SignIn";
+import Header from "./Header";
 
 
 export {
   Header,
   Signup,
-  Login,
-  Button,
-  Input,
-  Logo,
+  SignIn,
 }
+
+export { default as Logo } from './shared/Logo'
+export { default as Input } from './shared/Input'
+export { default as Button } from './shared/Button'
