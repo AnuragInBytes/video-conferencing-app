@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       unique: [true, "Username is already takken"]
     },
+    name: {
+      type: String,
+    },
     email: {
       type: String,
       require: [true, "Email is Required"],

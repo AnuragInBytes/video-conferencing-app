@@ -2,17 +2,17 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from '../utils/ApiError.js'
 import { User } from '../models/user.model.js'
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { jwt } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const registerUser = asyncHandler( async (req, res) => {
 
   // get user details from frontend (postman for now)
-  const { username, email, password } = req.body
+  const { name, username, email, password } = req.body
   // console.log("email: ", email)
 
   // validation - not empty atleast
   if(
-    [username, email, password].some((field) =>
+    [name, username, email, password].some((field) =>
       field?.trim() === "")
   ){
     throw new ApiError(400, "All fields are required");
@@ -22,7 +22,7 @@ const registerUser = asyncHandler( async (req, res) => {
     $or: [{ username }, { email }]
   })
   if(alreadyExist){
-    throw new ApiError(409, "User with username or email already exists")
+    throw new ApiError(409, "User with Credentials already exists")
   }
   // check for images or avatar
   // upload to cloudinary
@@ -30,6 +30,7 @@ const registerUser = asyncHandler( async (req, res) => {
   // create user object - entry in db
 
   const user = await User.create({
+    name,
     email,
     password,
     username: username? username.toLowerCase() : "",
@@ -78,7 +79,7 @@ const loginUser = asyncHandler( async (req, res) => {
     $or: [{ username }, { email }]
   })
   if(!user){
-    throw new ApiError(404, "user does not exist")
+    throw new ApiError(404, "Invalid Login Credentials")
   }
 
   // password check
