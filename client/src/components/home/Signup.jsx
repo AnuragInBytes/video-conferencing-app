@@ -1,9 +1,9 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import { Input, Button } from './index'
+import { Input, Button } from '../index'
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod'
-import api from '../api/api';
+import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 
 const schema = z.object({

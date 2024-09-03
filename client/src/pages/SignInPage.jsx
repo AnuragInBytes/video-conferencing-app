@@ -1,6 +1,6 @@
 import React from 'react'
-import SignIn from '../components/SignIn';
-import { Logo } from '../components';
+import { SignIn } from '../components/index';
+import { Logo } from '../components/index';
 import { useNavigate } from 'react-router-dom';
 
 function SignInPage() {

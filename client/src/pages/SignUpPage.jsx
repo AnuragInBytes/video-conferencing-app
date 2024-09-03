@@ -1,7 +1,7 @@
 import React from 'react'
-import { Signup } from '../components';
+import { Signup } from '../components/index';
 import { useNavigate } from 'react-router-dom';
-import { Logo } from '../components';
+import { Logo } from '../components/index';
 
 function SignUpPage() {
   const navigate = useNavigate();

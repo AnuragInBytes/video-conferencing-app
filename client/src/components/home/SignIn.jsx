@@ -1,12 +1,12 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Input, Button } from './index'
+import { Input, Button } from '../index'
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import api from '../api/api';
+import api from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'
-import { login as loginSlice } from '../redux/slices/authSlice';
+import { login as loginSlice } from '../../redux/slices/authSlice.js';
 
 const schema = z.object({
   email: z.string().min(1, { message: "This is required" } ).email({ message: 'Must be a valid email' }),
@@ -14,7 +14,7 @@ const schema = z.object({
 })
 
 function SignIn() {
-  const navaigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({
@@ -24,14 +24,14 @@ function SignIn() {
   const onSubmit = async(data) => {
     try {
       const response = await api.post('/users/login', data);
-      console.log(response.data)
+      // console.log(response.data)
       dispatch(loginSlice({
         userData: response.data.user,
         accessToken: response.data.accessToken,
         refreshToken: response.data.refreshToken,
         isAuthenticated: true,
       }))
-      navaigate('/');
+      navigate("/");
     } catch (error) {
       if(error.response && error.response.data) {
         setError("root.serverError", {

@@ -1,13 +1,9 @@
-import Signup from "./Signup"
-import SignIn from "./SignIn";
-import Header from "./Header";
 
 
-export {
-  Header,
-  Signup,
-  SignIn,
-}
+
+export { default as Header } from './home/Header'
+export { default as SignIn } from './home/SignIn'
+export { default as Signup } from './home/Signup'
 
 export { default as Logo } from './shared/Logo'
 export { default as Input } from './shared/Input'

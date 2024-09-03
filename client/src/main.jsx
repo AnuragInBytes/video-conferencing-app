@@ -7,7 +7,8 @@ import { Provider } from 'react-redux';
 import store from './redux/store.js';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
-import { HomePage, SignInPage, SignUpPage } from "./pages"
+import { HomePage, LobbyPage, SignInPage, SignUpPage } from "./pages"
+
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,13 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute authentication={false}>
             <SignUpPage />
+          </ProtectedRoute>
+        )
+      }, {
+        path: '/lobby',
+        element: (
+          <ProtectedRoute authentication={true}>
+            <LobbyPage />
           </ProtectedRoute>
         )
       }

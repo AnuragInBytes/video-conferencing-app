@@ -13,7 +13,7 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     if(authentication && isAuthenticated !== authentication){
-      navigate("/login")
+      navigate("/signin")
     }
     else if(!authentication && isAuthenticated !== authentication){
       navigate("/")

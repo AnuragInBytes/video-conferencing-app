@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../components/Header'
+import { Header } from '../components/index'
 import { useNavigate } from 'react-router-dom'
 
 function HomePage() {
