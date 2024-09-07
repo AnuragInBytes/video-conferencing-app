@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import { HomePage, SignInPage, SignUpPage } from "./pages"
 import { Upcoming, Recordings, Previous, PersonalRoom, Home } from './components/index.js'
+import LobbyPage from './pages/LobbyPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <Home />
+          },
+          {
+            path: '/join-room',
+            element: <LobbyPage />
           },
           {
             path: '/upcoming',

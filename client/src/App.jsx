@@ -30,7 +30,7 @@ function App() {
       .catch((error) => {
         console.log("No active session, Signin or create account");
         console.log("Acount not found: ", error);
-        navigate('/')
+        navigate('/signin')
       })
       .finally(() => setLoading(false))
   }, [])

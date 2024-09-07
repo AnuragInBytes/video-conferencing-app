@@ -8,7 +8,7 @@ function SignUpPage() {
 
   return (
       <section className='w-full h-screen flex justify-center items-center bg-white sm:bg-blue-300 md:bg-green-300 lg:bg-slate-500'>
-        <div className="card bg-white w-full h-screen sm:w-[35rem] sm:h-[55rem] shadow-2xl rounded-lg flex flex-col justify-center ">
+        <div className="card bg-white w-full h-screen my-3 sm:w-[35rem] sm:h-[55rem] shadow-2xl rounded-lg flex flex-col justify-center ">
           <div className='w-full flex justify-center items-center flex-col text-center'>
             <Logo />
             <h3 className='text-4xl font-bold pb-2'>Sign Up</h3>
