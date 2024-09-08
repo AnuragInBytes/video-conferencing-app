@@ -33,7 +33,12 @@ const roomSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
-    }
+    },
+    startTime: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
   }, { timestamps: true })
 
 export const Room = mongoose.model("Room", roomSchema)
