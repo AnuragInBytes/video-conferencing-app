@@ -18,9 +18,11 @@ app.use(cookieParser())
 
 //routes import
 import userRouter from './routes/user.routes.js'
+import roomRouter from './routes/room.routes.js'
 
 //routes declaration
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/rooms", roomRouter);
 
 // http://localhost800/api/v1/users/<user.routers.js>
 app.use((err, req, res, next) => {
