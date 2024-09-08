@@ -6,6 +6,6 @@ const router = Router();
 
 //sercure routes with jwt
 router.route("/create").post(verifyJWT, registerRoom);
-router.route("/join/:id").post(verifyJWT, joinRoom)
+router.route("/join/:roomId").post(verifyJWT, joinRoom)
 
 export default router;
