@@ -19,8 +19,22 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log('New socket connectd : ', socket.id);
+  console.log('New socket connected : ', socket.id);
   socket.emit('welcome', { message: 'Welcome to the server'});
+
+  socket.on("join-room", ({ roomId, userId }) => {
+    socket.join(roomId);
+
+    socket.to(roomId).emit(`${userId} joined room`);
+
+    io.in(roomId).emit("new-participant", { roomId, userId });
+  });
+
+  socket.on('leave-room', ({ roomId, userId }) => {
+    socket.leave(roomId);
+
+    socket.to(roomId).emit("user-left", { userId });
+  });
 
   socket.on('disconnect', () => {
     console.log("socket disconnected: ", socket.id)
