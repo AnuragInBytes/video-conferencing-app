@@ -18,36 +18,6 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/',
-        element: <HomePage />,
-        children: [
-          {
-            path: '/',
-            element: <Home />
-          },
-          {
-            path: '/join-room',
-            element: <LobbyPage />
-          },
-          {
-            path: '/upcoming',
-            element: <Upcoming />
-          },
-          {
-            path: '/recordings',
-            element: <Recordings />
-          },
-          {
-            path: '/previous',
-            element: <Previous />
-          },
-          {
-            path: '/personal-room',
-            element: <PersonalRoom />
-          }
-        ]
-      },
-      {
         path: '/signin',
         element: (
           <ProtectedRoute authentication={false}>
@@ -62,6 +32,40 @@ const router = createBrowserRouter([
             <SignUpPage />
           </ProtectedRoute>
         )
+      },
+      {
+        path: '/lobby',
+        element: (
+          <ProtectedRoute authentication>
+            <HomePage />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: '/lobby/',
+            element: <Home />
+          },
+          {
+            path: '/lobby/join-room',
+            element: <LobbyPage />
+          },
+          {
+            path: '/lobby/upcoming',
+            element: <Upcoming />
+          },
+          {
+            path: '/lobby/recordings',
+            element: <Recordings />
+          },
+          {
+            path: '/lobby/previous',
+            element: <Previous />
+          },
+          {
+            path: '/lobby/personal-room',
+            element: <PersonalRoom />
+          }
+        ]
       },
     ]
   }

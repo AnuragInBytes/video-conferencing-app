@@ -18,10 +18,9 @@ function App() {
     api.get("/users/current-user")
       .then((response) => {
         if(response){
-          console.log(response);
           const { accessToken, user } = response.data;
           dispatch(login({accessToken, user}));
-          navigate('/');
+          navigate('/lobby');
           // console.log(response);
         } else{
           dispatch(logout());
@@ -37,18 +36,9 @@ function App() {
 
   return !loading ? (
     <>
-    {/* <main className='relative'>
-      <NavBar />
-      <div className='flex'>
-        <SideBar />
-        <section className='flex min-h-screen flex-1 flex-col px-6 pb-6 pt-28 max-md:pb-14 sm:px-14'>
-          <div className='w-full'>
-            <Outlet />
-          </div>
-        </section>
-      </div>
-    </main> */}
-    <Outlet />
+    <main className='relative'>
+      <Outlet />
+    </main>
     </>
   ) : null;
 }

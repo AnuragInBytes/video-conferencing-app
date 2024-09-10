@@ -4,31 +4,31 @@ const sideBarContent = [
   {
     active: true,
     label: 'Home',
-    slug: '/',
+    slug: '/lobby',
     imgUrl: '/icons/Home.svg',
   },
   {
     label: 'Upcoming',
     active: true,
-    slug: '/upcoming',
+    slug: '/lobby/upcoming',
     imgUrl: '/icons/upcoming.svg',
   },
   {
     active: true,
     label: 'Previous',
-    slug: '/previous',
+    slug: '/lobby/previous',
     imgUrl: '/icons/previous.svg',
   },
   {
     active: true,
     label: 'Recordings',
-    slug: '/recordings',
+    slug: '/lobby/recordings',
     imgUrl: '/icons/Video.svg',
   },
   {
     active: true,
     label: "Personal Room",
-    slug: "/personal-room",
+    slug: "/lobby/personal-room",
     imgUrl: "/icons/add-personal.svg",
   }
 ]

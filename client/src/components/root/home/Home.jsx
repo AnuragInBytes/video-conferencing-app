@@ -60,7 +60,7 @@ function Home() {
         className='bg-[#F9A90E]'
         handleClick={() => {
           setMeetingState('isRecordingMeeting')
-          navigate('/recordings')
+          navigate('/lobby/recordings')
         }}
       />
       <MeetingModel
