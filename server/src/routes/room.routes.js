@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { joinRoom, registerRoom } from "../controllers/room.controller";
-import { verifyJWT } from "../middlewares/auth.middleware";
+import { joinRoom, registerRoom } from "../controllers/room.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

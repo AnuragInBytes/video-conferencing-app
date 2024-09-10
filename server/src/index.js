@@ -1,7 +1,7 @@
 // require('dotenv').config({path: './env'})
 import dotenv from 'dotenv';
 import connectDB from './db/index.js';
-import { app} from './app.js';
+import { app } from './app.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io'
 
@@ -15,6 +15,7 @@ const io = new Server(server, {
   cors: {
     origin: 'http://localhost:5173',
     credentials: true,
+    methods: ["GET", "POST"],
   },
 });
 
@@ -25,9 +26,10 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, userId }) => {
     socket.join(roomId);
 
-    socket.to(roomId).emit(`${userId} joined room`);
+    socket.to(roomId).emit('user-joined', { userId });
 
     io.in(roomId).emit("new-participant", { roomId, userId });
+    console.log(userId, roomId);
   });
 
   socket.on('leave-room', ({ roomId, userId }) => {
@@ -40,7 +42,7 @@ io.on("connection", (socket) => {
     console.log("socket disconnected: ", socket.id)
   });
 
-})
+});
 
 connectDB()
   .then( () => {
