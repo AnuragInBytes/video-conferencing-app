@@ -11,10 +11,13 @@ const registerRoom = asyncHandler( async (req, res) => {
   // if(!title?.trim() || !startTime){
   //   throw new ApiError(400, "All fields are required");
   // }
-  if(
-    [title, startTime, createdBy].some((field) => field?.trim() === "")
-  ){
-    throw new ApiError(400, "All fields are required");
+  // if(
+  //   [title, startTime, createdBy].some((field) => field?.trim() === "")
+  // ){
+  //   throw new ApiError(400, "All fields are required");
+  // }
+  if(!title || !startTime || !createdBy){
+    throw new ApiError(400, "All fields are required")
   }
 
   const start = new Date(startTime);
