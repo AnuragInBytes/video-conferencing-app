@@ -1,6 +1,6 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Input, Button } from '../index'
+import { Input } from '../index'
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import api from '../../api/api.js';
@@ -24,14 +24,13 @@ function SignIn() {
   const onSubmit = async(data) => {
     try {
       const response = await api.post('/users/login', data);
-      // console.log(response.data)
       dispatch(loginSlice({
-        userData: response.data.user,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        userData: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+        refreshToken: response.data.data.refreshToken,
         isAuthenticated: true,
       }))
-      navigate("/lobby");
+      navigate("/lobby")
     } catch (error) {
       if(error.response && error.response.data) {
         setError("root.serverError", {

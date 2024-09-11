@@ -7,10 +7,8 @@ import { Provider } from 'react-redux';
 import store from './redux/store.js';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
-import { HomePage, SignInPage, SignUpPage } from "./pages"
-import { Upcoming, Recordings, Previous, PersonalRoom, Home } from './components/index.js'
-import LobbyPage from './pages/LobbyPage.jsx'
-
+import { HomePage, SignInPage, SignUpPage, RoomPage } from "./pages"
+import { Upcoming, Recordings, Previous, PersonalRoom, Home, Room } from './components/index.js'
 
 const router = createBrowserRouter([
   {
@@ -42,12 +40,8 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: '/lobby/',
+            path: '/lobby',
             element: <Home />
-          },
-          {
-            path: '/lobby/join-room',
-            element: <LobbyPage />
           },
           {
             path: '/lobby/upcoming',
@@ -64,9 +58,17 @@ const router = createBrowserRouter([
           {
             path: '/lobby/personal-room',
             element: <PersonalRoom />
-          }
+          },
         ]
       },
+      {
+        path: '/room/:roomId',
+        element: (
+          <ProtectedRoute authentication>
+            <RoomPage />
+          </ProtectedRoute>
+        )
+      }
     ]
   }
 ])
