@@ -6,13 +6,18 @@ import useSocket from '@/api/useSocket';
 import api from '@/api/api';
 import { useSelector } from 'react-redux';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@radix-ui/react-toast';
 
 function Home() {
 
   const navigate = useNavigate();
   const [meetingState, setMeetingState] = useState('');
-  const [callDetails, setcallDetails] = useState();
+  const [callDetails, setcallDetails] = useState(false);
   const [values, setValues] = useState({});
+
+  const { toast } = useToast();
+
 
   const now = new Date();
   const time = now.toLocaleTimeString('en-in', { hour: '2-digit', minute: '2-digit' })
@@ -41,6 +46,7 @@ function Home() {
       socket.emit("join-room", { joinRoomId, userId});
 
       navigate(`/room/${joinRoomId}`);
+      toast({title: "Meeting Created",});
 
       return () => {
         socket.off('connect');
@@ -48,18 +54,41 @@ function Home() {
       }
     } catch (error) {
       console.log("Error while creating Instant Meeting: ", error);
+      toast({
+        variant: "desctuctive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with you request",
+        action: <ToastAction altText='try again'>Try Again</ToastAction>
+      })
     }
   }
 
   const createMeeting = async () => {
 
     try {
+      if(values.title == undefined || values.dateTime == undefined) {
+        toast({
+          variant: "destructive",
+          title: "Kya Yaar!!",
+          description: "Title and Timing are required.",
+          action: <ToastAction altText='try again'>Try Again</ToastAction>
+        })
+        return
+      }
       const response = await api.post('/rooms/create', {
         title: values.title,
         startTime: values.dateTime,
       });
+      toast({title: "Meeting Created Successfully"});
+      setcallDetails(true)
     } catch (error) {
       console.log("Error while creating room: ", error);
+      toast({
+        variant: "desctuctive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with you request",
+        action: <ToastAction altText='try again'>Try Again</ToastAction>
+      })
     }
   }
 
@@ -141,12 +170,18 @@ function Home() {
             title="Meeting Created"
             className="text-center text-white"
             handleClick={() => {
-              navigator.clipboard.writeText(meetingLink)
+              navigator.clipboard.writeText('copycopy')
                 .then(() => {
-                  alert("copied successfully");
+                  // throw Error
+                  toast({title: "Link Copied."});
                 })
                 .catch(() => {
-                  alert("something went wrong");
+                  toast({
+                    variant: "destructive",
+                    title: "Uh oh! something went wrong",
+                    description: "Couldn't copy the link",
+                    action: <ToastAction altText='try again'>Try Again</ToastAction>
+                  })
                 })
               setcallDetails(false);
             }}
