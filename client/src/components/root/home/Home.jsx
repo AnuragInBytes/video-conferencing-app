@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import HomeCard from './HomeCard';
 import { useNavigate } from 'react-router-dom';
 import MeetingModel from '../MeetingModel';
-import useSocket from '@/api/useSocket';
+import useSocket from '@/api/socket/useSocket';
 import api from '@/api/api';
 import { useSelector } from 'react-redux';
 import { Textarea } from '@/components/ui/textarea';
