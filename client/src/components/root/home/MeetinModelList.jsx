@@ -32,7 +32,7 @@ function MeetinModelList() {
 
   const createInstantMeeting = async () => {
     try {
-      const socket = useSocket('http://localhost:5000');
+      const socket = useSocket();
       const createResponse = await api.post('/rooms/create', {
         title: "Instant Meeting",
         startTime: new Date().toISOString(),

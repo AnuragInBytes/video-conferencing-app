@@ -1,7 +1,10 @@
 import { io } from "socket.io-client";
 
-function useSocket(url){
-  const socket = io(url.toString(), {
+const url = import.meta.env.VITE_SOCKET_URL;
+
+function useSocket(){
+
+  const socket = io(url, {
     withCredentials: true,
     reconnection: true,
     reconnectionAttempts: 5,
