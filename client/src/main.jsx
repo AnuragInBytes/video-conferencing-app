@@ -8,7 +8,8 @@ import store from './redux/store.js';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import { HomePage, SignInPage, SignUpPage, RoomPage } from "./pages"
-import { Upcoming, Recordings, Previous, PersonalRoom, Home, Room } from './components/index.js'
+import { Upcoming, Recordings, Previous, PersonalRoom, Home } from './components/index.js'
+import { SocketProvider } from './context/socketContext.jsx'
 
 const router = createBrowserRouter([
   {
@@ -76,9 +77,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
+    <SocketProvider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </SocketProvider>
 
   </StrictMode>,
 )

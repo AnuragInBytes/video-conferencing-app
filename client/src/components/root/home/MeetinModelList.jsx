@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import HomeCard from './HomeCard'
 import MeetingModel from '../MeetingModel'
 import { useState } from 'react'
@@ -9,8 +9,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ToastAction } from '@radix-ui/react-toast'
 import { Input } from '@/components'
 import { useSelector } from 'react-redux'
-import useSocket from '@/api/socket/useSocket'
-
+import { useSocket } from '@/context/socketContext'
 
 
 
@@ -29,6 +28,7 @@ function MeetinModelList() {
   const { userData } = useSelector(state => state.auth)
 
   const socket = useSocket();
+
   // ----------------- functinal definition ----------------
 
   const createInstantMeeting = async () => {
@@ -60,7 +60,6 @@ function MeetinModelList() {
         socket.off('connect');
         socket.off('welcome');
         socket.off("user-joined");
-        socket.disconnect();
       }
     } catch (error) {
       console.log("Error while creating Instant meeting : ", error);
@@ -93,7 +92,6 @@ function MeetinModelList() {
         socket.off("message");
         socket.off("user-joined");
         socket.off("connect");
-        socket.disconnect();
       }
     } catch (error) {
       console.log("Error while joining Room: ", error);
