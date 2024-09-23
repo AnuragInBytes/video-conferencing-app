@@ -26,6 +26,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, userId }) => {
     socket.join(roomId);
 
+    console.log("emmitiing user-joined event")
     socket.to(roomId).emit('user-joined', { userId });
 
     io.in(roomId).emit("new-participant", { roomId, userId });
