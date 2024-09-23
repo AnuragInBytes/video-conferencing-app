@@ -53,7 +53,7 @@ const joinRoom = asyncHandler( async(req, res) => {
   }
 
   //check the participant is already in some room or not
-  const alreadyIn = (participant) => participant.userId.toString() === userId.String();
+  const alreadyIn = (participant) => participant.userId.toString() === userId.toString();
   const isPartOf = room.participants.some(alreadyIn);
 
   if(!isPartOf){
