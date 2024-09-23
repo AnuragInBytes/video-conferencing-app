@@ -42,16 +42,24 @@ function MeetinModelList() {
       socket.on('connect', () => {
         console.log("Connected to server: ", socket.id);
       });
+      socket.on('welcome', ({ message }) => {
+        console.log(message);
+      });
       const joinResponse = await api.post(`/rooms/join/${roomId}`);
 
       const joinRoomId = joinResponse.data.data._id;
       socket.emit("join-room", { joinRoomId, userId });
+      socket.on('user-joined', ({userId}) => {
+        console.log(`${userId} just joined the room.`);
+      })
 
       navigate(`/room/${joinRoomId}`);
       toast({title: "Meeting Created."});
 
       return () => {
         socket.off('connect');
+        socket.off('welcome');
+        socket.off("user-joined");
         socket.disconnect();
       }
     } catch (error) {
@@ -60,6 +68,33 @@ function MeetinModelList() {
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description: "Couldn't create Instant Meeting.",
+        action: <ToastAction altText='try-again'>Try Again</ToastAction>
+      });
+    }
+  }
+
+  const joinRoom = async (roomId) => {
+    try {
+      const response = await api.post(`/rooms/join/${roomId}`);
+      const joinedRoomId = response.data.data._id;
+      const socket = useSocket();
+      socket.on("message", ({message}) => {
+        console.log(message)
+      });
+      socket.on('user-joined', ({userId}) => {
+        console.log(`${userId} just joined the room`)
+      });
+      navigate(`/room/${joinedRoomId}`);
+      return () => {
+        socket.off("message");
+        socket.off("user-joined")
+      }
+    } catch (error) {
+      console.log("Error while joining Room: ", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Couldn't Join you Meeting.",
         action: <ToastAction altText='try-again'>Try Again</ToastAction>
       });
     }
@@ -188,10 +223,15 @@ function MeetinModelList() {
     title="Paste Link Here"
     className="text-white text-center"
     buttonText="Join Meeting"
-    handleClick={() => navigate(`/room/${values.link}`)}>
+    handleClick={() => {
+      joinRoom(values.link);
+    }}>
       <Input
       placeholder="Meeting Link"
-      onChange={(e) => setValues({...values, link: e.target.value })}
+      onChange={(e) => {
+        setValues({...values, link: e.target.value })
+        console.log(values.link);
+      }}
       />
     </MeetingModel>
 
