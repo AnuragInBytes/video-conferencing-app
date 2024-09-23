@@ -21,7 +21,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log('New socket connected : ', socket.id);
-  socket.emit('welcome', { message: 'Welcome to the server'});
+  socket.emit('welcome', { message: 'Welcome, You are now in the server.'});
 
   socket.on("join-room", ({ roomId, userId }) => {
     socket.join(roomId);
