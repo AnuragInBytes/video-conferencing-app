@@ -162,7 +162,7 @@ function MeetinModelList() {
       className='bg-[#F9A90E]'
       handleClick={() => {
         setMeetingState('isRecordingMeeting')
-        navigate('/lobby/recordings')
+        navigate('/recordings')
       }}
     />
     <HomeCard

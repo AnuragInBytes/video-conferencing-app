@@ -32,7 +32,7 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: '/lobby',
+        path: '/',
         element: (
           <ProtectedRoute authentication>
             <HomePage />
@@ -40,23 +40,23 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: '/lobby',
+            path: '/',
             element: <Home />
           },
           {
-            path: '/lobby/upcoming',
+            path: '/upcoming',
             element: <Upcoming />
           },
           {
-            path: '/lobby/recordings',
+            path: '/recordings',
             element: <Recordings />
           },
           {
-            path: '/lobby/previous',
+            path: '/previous',
             element: <Previous />
           },
           {
-            path: '/lobby/personal-room',
+            path: '/personal-room',
             element: <PersonalRoom />
           },
         ]

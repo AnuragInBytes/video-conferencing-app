@@ -30,7 +30,7 @@ function SignIn() {
         refreshToken: response.data.data.refreshToken,
         isAuthenticated: true,
       }))
-      navigate("/lobby")
+      navigate("/")
     } catch (error) {
       if(error.response && error.response.data) {
         setError("root.serverError", {

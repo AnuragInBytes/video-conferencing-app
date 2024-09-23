@@ -21,7 +21,7 @@ function App() {
         if(response){
           const { accessToken, user } = response.data;
           dispatch(login({accessToken, user}));
-          navigate('/lobby');
+          navigate('/');
           // console.log(response);
         } else{
           dispatch(logout());
