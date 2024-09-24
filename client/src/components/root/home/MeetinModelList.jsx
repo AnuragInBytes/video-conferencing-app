@@ -37,7 +37,7 @@ function MeetinModelList() {
         title: "Instant Meeting",
         startTime: new Date().toISOString(),
       });
-      const roomId = createResponse.data.data._id;
+      const room = createResponse.data.data._id;
       const userId = userData?._id;
       socket.on('connect', () => {
         console.log("Connected to server: ", socket.id);
@@ -45,21 +45,24 @@ function MeetinModelList() {
       socket.on('welcome', ({ message }) => {
         console.log(message);
       });
-      const joinResponse = await api.post(`/rooms/join/${roomId}`);
+      const joinResponse = await api.post(`/rooms/join/${room}`);
 
-      const joinRoomId = joinResponse.data.data._id;
-      socket.emit("join-room", { joinRoomId, userId });
-      socket.on('user-joined', ({userId}) => {
-        console.log(`${userId}(You) just joined the room.`);
+      const roomId = joinResponse.data.data._id;
+      socket.emit("join-room", { roomId, userId });
+      socket.on('new-participant', ({userId}) => {
+        console.log(`${userId} just joined the room.`);
       })
+      socket.on("join-message", ({roomId}) => {
+        console.log(`You joined room ${roomId}`)
+      });
 
-      navigate(`/room/${joinRoomId}`);
+      navigate(`/room/${roomId}`);
       toast({title: "Meeting Created."});
 
       return () => {
         socket.off('connect');
         socket.off('welcome');
-        socket.off("user-joined");
+        socket.off("new-participant");
       }
     } catch (error) {
       console.log("Error while creating Instant meeting : ", error);
@@ -72,10 +75,11 @@ function MeetinModelList() {
     }
   }
 
-  const joinRoom = async (roomId) => {
+  const joinRoom = async (room) => {
     try {
-      const response = await api.post(`/rooms/join/${roomId}`);
-      const joinedRoomId = response.data.data._id;
+      const response = await api.post(`/rooms/join/${room}`);
+      const roomId = response.data.data._id;
+      console.log(roomId);
       const userId = userData?._id;
       socket.on("connect", () => {
         console.log("Connected to server: ", socket.id);
@@ -83,15 +87,15 @@ function MeetinModelList() {
       socket.on("welcome", ({message}) => {
         console.log(message)
       });
-      socket.emit("join-room", { joinedRoomId, userId });
-      socket.on('user-joined', ({userId}) => {
-        console.log(`${userId} just joined the room`)
+      socket.emit("join-room", { roomId, userId });
+      socket.on('join-message', ({ roomId }) => {
+        console.log(`You Joined the room ${roomId}`);
       });
       navigate(`/room/${joinedRoomId}`);
       return () => {
         socket.off("message");
-        socket.off("user-joined");
         socket.off("connect");
+        socket.off('join-message');
       }
     } catch (error) {
       console.log("Error while joining Room: ", error);

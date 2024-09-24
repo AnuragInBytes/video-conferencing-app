@@ -26,10 +26,11 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, userId }) => {
     socket.join(roomId);
 
-    console.log("emmitiing user-joined event")
-    socket.to(roomId).emit('user-joined', { userId });
+    socket.to(roomId).emit('user-joined', { userId }); // to others
 
-    io.in(roomId).emit("new-participant", { roomId, userId });
+    socket.to(socket.id).emit('join-message', { roomId }); // to socket
+
+    io.in(roomId).emit("new-participant", { roomId, userId }); // to all
     console.log(userId, roomId);
   });
 

@@ -2,13 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
+//routing
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+//redux provider setup
 import { Provider } from 'react-redux';
 import store from './redux/store.js';
-import ProtectedRoute from './components/ProtectedRoute.jsx'
-
+// pages and componenets
 import { HomePage, SignInPage, SignUpPage, RoomPage } from "./pages"
 import { Upcoming, Recordings, Previous, PersonalRoom, Home } from './components/index.js'
+//socket provider
 import { SocketProvider } from './context/socketContext.jsx'
 
 const router = createBrowserRouter([
@@ -77,11 +80,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SocketProvider>
-      <Provider store={store}>
+    <Provider store={store}>
+      <SocketProvider>
         <RouterProvider router={router} />
-      </Provider>
-    </SocketProvider>
+      </SocketProvider>
+    </Provider>
 
   </StrictMode>,
 )

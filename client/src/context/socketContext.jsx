@@ -9,20 +9,16 @@ export const useSocket = () => {
 
 export const SocketProvider = ({children}) => {
 
-  const socket = useMemo(() => io(import.meta.env.VITE_SOCKET_URL, {
-    withCredentials: true,
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-  }), []);
+  const socket = useMemo(() => {
+    const socketInstance = io(import.meta.env.VITE_SOCKET_URL, {
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
-  useEffect(() => {
-    return () => {
-      if(socket) {
-        socket.disconnect();
-      }
-    };
-  }, [socket])
+    return socketInstance;
+  }, []);
 
   return(
     <SocketContext.Provider value={socket}>
