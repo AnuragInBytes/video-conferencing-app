@@ -39,7 +39,9 @@ const router = createBrowserRouter([
         path: '/',
         element: (
           <ProtectedRoute authentication>
-            <HomePage />
+            <SocketProvider>
+              <HomePage />
+            </SocketProvider>
           </ProtectedRoute>
         ),
         children: [
@@ -81,9 +83,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <SocketProvider>
-        <RouterProvider router={router} />
-      </SocketProvider>
+      <RouterProvider router={router} />
     </Provider>
 
   </StrictMode>,

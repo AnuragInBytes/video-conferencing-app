@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import MobileNav from './MobileNav'
+import LogoutBtn from '../LogoutBtn'
 
 function NavBar() {
   return (
@@ -12,8 +13,8 @@ function NavBar() {
 
       <div className='flex justify-between items-center gap-5 '>
         {/* user managment */}
-        <div className='bg-white px-2 py-3 rounded-full'>
-          user
+        <div className=''>
+          <LogoutBtn />
         </div>
         <MobileNav />
       </div>
