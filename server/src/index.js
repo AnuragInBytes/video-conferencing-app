@@ -21,16 +21,15 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log('New socket connected : ', socket.id);
-  socket.emit('welcome', { message: 'Welcome, You are now in the server.'});
 
   socket.on("join-room", ({ roomId, userId }) => {
     socket.join(roomId);
 
-    socket.to(roomId).emit('user-joined', { userId }); // to others
+    socket.broadcast.to(roomId).emit('user-joined', { socketId: socket.id }); // to others
 
-    socket.to(socket.id).emit('join-message', { roomId }); // to socket
+    socket.to(socket.id).emit('join-message', { roomId }); // to itself
 
-    io.in(roomId).emit("new-participant", { roomId, userId }); // to all
+    io.in(roomId).emit("new-participant", { roomId, userId }); // to everyone
     console.log(userId, roomId);
   });
 

@@ -18,16 +18,13 @@ function MeetinModelList() {
   // --------------- Hooks and states --------------------
 
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { userData } = useSelector(state => state.auth)
+  const socket = useSocket();
 
   const [values, setValues] = useState({});
   const [callDetails, setcallDetails] = useState(false);
   const [meetingState, setMeetingState] = useState(undefined);
-
-  const { toast } = useToast();
-
-  const { userData } = useSelector(state => state.auth)
-
-  const socket = useSocket();
 
   // ----------------- functinal definition ----------------
 
@@ -49,9 +46,6 @@ function MeetinModelList() {
 
       const roomId = joinResponse.data.data._id;
       socket.emit("join-room", { roomId, userId });
-      socket.on('new-participant', ({userId}) => {
-        console.log(`${userId} just joined the room.`);
-      })
       socket.on("join-message", ({roomId}) => {
         console.log(`You joined room ${roomId}`)
       });
@@ -62,7 +56,7 @@ function MeetinModelList() {
       return () => {
         socket.off('connect');
         socket.off('welcome');
-        socket.off("new-participant");
+        socket.off("join-message");
       }
     } catch (error) {
       console.log("Error while creating Instant meeting : ", error);
@@ -91,7 +85,7 @@ function MeetinModelList() {
       socket.on('join-message', ({ roomId }) => {
         console.log(`You Joined the room ${roomId}`);
       });
-      navigate(`/room/${joinedRoomId}`);
+      navigate(`/room/${roomId}`);
       return () => {
         socket.off("message");
         socket.off("connect");
@@ -108,7 +102,7 @@ function MeetinModelList() {
     }
   }
 
-  const createMeeting = async () => {
+  const scheduleMeeting = async () => {
 
     try {
       if(meetingState == 'isSchedulingMeeting' && (values.title == undefined || values.dateTime == undefined)) {
@@ -180,7 +174,7 @@ function MeetinModelList() {
       isOpen={meetingState === 'isSchedulingMeeting'}
       onClosed={() => setMeetingState(undefined)}
       title="Create Meeting"
-      handleClick={createMeeting}>
+      handleClick={scheduleMeeting}>
         <div className='flex flex-col gap-2.5'>
           <label className='text-base leading-[22px] text-sky-100 ' htmlFor="title-area">
             Add a Title
