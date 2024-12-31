@@ -1,21 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import { Camera, CameraOff, Mic, MicOff, PhoneOff } from "lucide-react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
-const Room = ({ roomId }) => {
+const Room = ({ roomId, onLeaveRoom }) => {
   const [peers] = useState(new Map());
   const [streams, setStreams] = useState(new Map());
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const socketRef = useRef();
   const localStreamRef = useRef();
   const localVideoRef = useRef(null);
-  const [isConnected, setIsConnected] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
   const [hasLocalVideo, setHadLocalVideo] = useState(false);
 
   const configuration = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
       { urls: 'stun:stun.vidyo.com:3478'},
       { urls: 'stun:stun.phone.com:3478'},
-      { urls: 'stun:stun1.l.google.com:19302' },
     ]
   };
 
@@ -26,6 +29,34 @@ const Room = ({ roomId }) => {
         videoElement.play().catch(e => console.error('Video play failed: ', e));
       };
     };
+  };
+
+  const toggleAudio = () => {
+    if (localStreamRef.current) {
+      const audioTracks = localStreamRef.current.getAudioTracks();
+      if (audioTracks.length > 0) {
+        audioTracks[0].enabled = !isAudioEnabled;
+        setIsAudioEnabled(!isAudioEnabled);
+      }
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStreamRef.current) {
+      const videoTracks = localStreamRef.current.getVideoTracks();
+      if (videoTracks.length > 0) {
+        videoTracks[0].enabled = !isVideoEnabled;
+        setIsVideoEnabled(!isVideoEnabled);
+      }
+    }
+  };
+
+  const leaveRoom = () => {
+    cleanup();
+    if (socketRef.current) {
+      socketRef.current.emit('user-left', roomId);
+    }
+    onLeaveRoom?.();
   };
 
   useEffect(() => {
@@ -57,7 +88,7 @@ const Room = ({ roomId }) => {
           attachStreamToVideo(localVideoRef.current, stream);
         }
 
-        setIsConnected(true);
+        // setIsConnected(true);
         socketRef.current.emit("join-room", roomId);
       } catch (error) {
         console.error("Error accessing media devices: ", error);
@@ -69,7 +100,7 @@ const Room = ({ roomId }) => {
     initializeStream();
 
     socketRef.current.on('user-joined', handleUserJoined);
-    socketRef.current.on('existing-participants', handlerExistingParticipants);
+    // socketRef.current.on('existing-participants', handlerExistingParticipants);
     socketRef.current.on('offer', handleOffer);
     socketRef.current.on('answer', handleAnswer);
     socketRef.current.on('ice-candidate', handleIceCandidate);
@@ -85,56 +116,53 @@ const Room = ({ roomId }) => {
     if(localVideoRef.current && localStreamRef.current) {
       attachStreamToVideo(localVideoRef.current, localStreamRef.current);
     }
-  }, [localVideoRef.current]);
+  }, []);
 
   const createPeerConnection = (userId) => {
-    console.log("creating peer connection for: ", userId);
     const peer = new RTCPeerConnection(configuration);
 
-    if(localStreamRef.current) {
+    if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => {
-        console.log("Adding tracks to peer connection : ", track.kind);
         peer.addTrack(track, localStreamRef.current);
       });
     }
 
-    peer.onicecandidate = (event) => {
-      if(event.candidate) {
-        console.log("Sending ice candidate");
-        socketRef.current.emit('ice-candidate', {
-          candidate: event.candidate,
-          to: userId
+    peer.ontrack = (event) => {
+      console.log('Received remote track:', event.track.kind);
+      console.log("Remote Stream: ", event.streams[0]);
+      if (event.streams && event.streams[0]) {
+        console.log("remote video yo: ", event.streams[0].getVideoTracks());
+        setStreams(prev => {
+          const newStreams = new Map(prev);
+          newStreams.set(userId, event.streams[0]);
+          return newStreams;
         });
       }
     };
 
+    // Add connection state logging
     peer.onconnectionstatechange = () => {
-      console.log(`Connection state for ${userId}: `, peer.iceConnectionState);
-    }
+      console.log(`Peer connection state (${userId}):`, peer.connectionState);
+    };
 
-    peer.ontrack = (event) => {
-      console.log("Receiving remote tracks: ", event.track.kind);
-      const remoteStream = event.streams[0];
-      if(remoteStream) {
-        setStreams(prev => new Map(prev.set(userId, remoteStream)));
-      }
+    // Add ICE connection state logging
+    peer.oniceconnectionstatechange = () => {
+      console.log(`ICE connection state (${userId}):`, peer.iceConnectionState);
     };
 
     peers.set(userId, peer);
     return peer;
   };
 
-  const handleUserJoined = async(userId) => {
-    console.log("New user joined: ", userId);
-    const peer = createPeerConnection(userId);
-
+  const handleUserJoined = async (userId) => {
+    console.log('New user joined:', userId);
     try {
+      const peer = createPeerConnection(userId);
       const offer = await peer.createOffer();
-      console.log("creating offer: ", offer.type);
-      await peer.setLocalDescription(offer);
-      socketRef.current.emit("offer", { offer, to: userId});
+      await peer.setLocalDescription(new RTCSessionDescription(offer));
+      socketRef.current.emit('offer', { offer, to: userId });
     } catch (error) {
-      console.error("Error while creating offer : ", error)
+      console.error('Error creating offer:', error);
     }
   };
 
@@ -191,7 +219,7 @@ const Room = ({ roomId }) => {
     const peer = peers.get(from);
     if(peer) {
       try {
-        await peer.addIceCandidate(new RTCSessionDescription(candidate));
+        await peer.addIceCandidate(new RTCIceCandidate(candidate));
       } catch (error) {
         console.error("Error while handeling ice candidate: ", error);
       }
@@ -204,13 +232,12 @@ const Room = ({ roomId }) => {
     if(peer){
       peer.close();
       peers.delete(userId);
+      setStreams(prev => {
+        const next = new Map(prev);
+        next.delete(useId);
+        return next;
+      });
     }
-
-    setStreams(prev => {
-      const next = new Map(prev);
-      next.delete(userId);
-      return next;
-    });
   };
 
   const cleanup = () => {
@@ -225,7 +252,7 @@ const Room = ({ roomId }) => {
       socketRef.current.disconnect();
     }
 
-    setIsConnected(false);
+    // setIsConnected(false);
     setStreams(new Map());
     setHadLocalVideo(false);
   };
@@ -233,33 +260,67 @@ const Room = ({ roomId }) => {
   const remoteStreams = streams.size > 0 ? Array.from(streams) : [];
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-4">
-      <div className="relative">
-        <video
-          ref={localVideoRef}
-          autoPlay
-          muted
-          playsInline
-          className="w-full h-64 rounded-lg bg-gray-800 object-cover"
-        />
-        <span className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">You {!hasLocalVideo && '(No Video)'}</span>
-      </div>
-      {
-        remoteStreams.map(([userId, stream]) => (
+    <div className="flex flex-col h-full">
+      <div className="flex-1 grid grid-cols-3 gap-4 p-4">
+        <div className="relative">
+          <video
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-64 rounded-lg bg-gray-800 object-cover"
+          />
+          <span className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+            You {!hasLocalVideo && '(No video)'}
+          </span>
+        </div>
+        {remoteStreams.map(([userId, stream]) => (
           <div key={userId} className="relative">
             <video
+              key={`video-${userId}`}
               autoPlay
               playsInline
+              muted
               className="w-full h-64 rounded-lg bg-gray-800 object-cover"
-              ref={el => stream && el && attachStreamToVideo(el, stream)}
+              ref={el => {
+                if (el && (!el.srcObject || el.srcObject.id !== stream.id)) {
+                  console.log('Setting remote stream for:', userId);
+                  console.log("remote stream: ", stream);
+                  el.srcObject = stream;
+                  el.play().catch(e => console.error('Video play failed', e));
+                }
+              }}
             />
-            <span className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">Participant {userId.slice(0,4)}</span>
+            <span className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+              Participant {userId.slice(0, 4)}
+            </span>
           </div>
-        ))
-      }
+        ))}
+      </div>
+
+      {/* Control panel remains the same */}
+      <div className="flex justify-center gap-4 p-4 bg-gray-800">
+        <button
+          onClick={toggleAudio}
+          className={`p-3 rounded-full ${isAudioEnabled ? 'bg-gray-600' : 'bg-red-500'}`}
+        >
+          {isAudioEnabled ? <Mic size={24} /> : <MicOff size={24} />}
+        </button>
+        <button
+          onClick={toggleVideo}
+          className={`p-3 rounded-full ${isVideoEnabled ? 'bg-gray-600' : 'bg-red-500'}`}
+        >
+          {isVideoEnabled ? <Camera size={24} /> : <CameraOff size={24} />}
+        </button>
+        <button
+          onClick={leaveRoom}
+          className="p-3 rounded-full bg-red-500"
+        >
+          <PhoneOff size={24} />
+        </button>
+      </div>
     </div>
   );
-
 };
 
 export default Room;

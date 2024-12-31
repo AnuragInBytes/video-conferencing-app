@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import api from '@/api/api'
 import { useToast } from '@/hooks/use-toast'
 import { ToastAction } from '@radix-ui/react-toast'
-import { Input } from '@/components'
+import { Input, Room } from '@/components'
 import { useSelector } from 'react-redux'
 import { useSocket } from '@/context/socketContext'
 
@@ -28,6 +28,11 @@ function MeetinModelList() {
 
   // ----------------- functinal definition ----------------
 
+  const handleLeaveRoom = () => {
+    navigate('/');
+    console.log("left room");
+  }
+
   const createInstantMeeting = async () => {
     try {
       const createResponse = await api.post('/rooms/create', {
@@ -36,28 +41,15 @@ function MeetinModelList() {
       });
       const room = createResponse.data.data._id;
       const userId = userData?._id;
-      socket.on('connect', () => {
-        console.log("Connected to server: ", socket.id);
-      });
-      socket.on('welcome', ({ message }) => {
-        console.log(message);
-      });
+
       const joinResponse = await api.post(`/rooms/join/${room}`);
 
       const roomId = joinResponse.data.data._id;
-      socket.emit("join-room", { roomId, userId });
-      socket.on("join-message", ({roomId}) => {
-        console.log(`You joined room ${roomId}`)
-      });
+
+      <Room roomId={roomId} onLeaveRoom={handleLeaveRoom} />
 
       navigate(`/room/${roomId}`);
       toast({title: "Meeting Created."});
-
-      return () => {
-        socket.off('connect');
-        socket.off('welcome');
-        socket.off("join-message");
-      }
     } catch (error) {
       console.log("Error while creating Instant meeting : ", error);
       toast({
@@ -75,22 +67,9 @@ function MeetinModelList() {
       const roomId = response.data.data._id;
       console.log(roomId);
       const userId = userData?._id;
-      socket.on("connect", () => {
-        console.log("Connected to server: ", socket.id);
-      });
-      socket.on("welcome", ({message}) => {
-        console.log(message)
-      });
-      socket.emit("join-room", { roomId, userId });
-      socket.on('join-message', ({ roomId }) => {
-        console.log(`You Joined the room ${roomId}`);
-      });
+
+      <Room roomId={roomId} onLeaveRoom={handleLeaveRoom} />
       navigate(`/room/${roomId}`);
-      return () => {
-        socket.off("message");
-        socket.off("connect");
-        socket.off('join-message');
-      }
     } catch (error) {
       console.log("Error while joining Room: ", error);
       toast({
@@ -101,6 +80,7 @@ function MeetinModelList() {
       });
     }
   }
+
 
   const scheduleMeeting = async () => {
 

@@ -19,31 +19,59 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log('New socket connected : ', socket.id);
+const rooms = new Map();
 
-  socket.on("join-room", ({ roomId, userId }) => {
+io.on("connection", (socket) => {
+  console.log("New Socket connected: ", socket.id);
+
+  socket.on('join-room', (roomId) => {
+    if(!rooms.has(roomId)) {
+      rooms.set(roomId, new Set());
+      console.log("rooms: ", rooms);
+    }
+
+    rooms.get(roomId).add(socket.id);
     socket.join(roomId);
 
-    socket.broadcast.to(roomId).emit('user-joined', { socketId: socket.id }); // to others
+    socket.to(roomId).emit('user-joined', socket.id);
 
-    socket.to(socket.id).emit('join-message', { roomId }); // to itself
-
-    io.in(roomId).emit("new-participant", { roomId, userId }); // to everyone
-    console.log(userId, roomId);
+    const participants = Array.from(rooms.get(roomId)).filter(id => id !== socket.id);
+    socket.emit('existing-participants', participants);
   });
 
-  socket.on('leave-room', ({ roomId, userId }) => {
-    socket.leave(roomId);
+  socket.on('offer', ({offer, to}) => {
+    socket.to(to).emit('offer', { offer, from: socket.id});
+  });
 
-    socket.to(roomId).emit("user-left", { userId });
+  socket.on('answer', ({ answer, to }) => {
+    socket.to(to).emit('answer', { answer, from: socket.id });
+  });
+
+  socket.on('ice-candidate', ({ candidate, to }) => {
+    socket.to(to).emit('ice-candidate', { candidate, from: socket.id });
+  });
+
+  socket.on('user-left', (roomId) => {
+    rooms.forEach((participants, roomId) => {
+      if(participants.has(socket.id)) {
+        participants.delete(socket.id);
+        socket.to(roomId).emit('user-left', socket.id);
+      }
+    });
   });
 
   socket.on('disconnect', () => {
-    console.log("socket disconnected: ", socket.id)
+    rooms.forEach((participants, roomId) => {
+      if(participants.delete(socket.id)){
+        socket.to(roomId).emit('user-left', socket.id);
+        if(participants.size === 0){
+          rooms.delete(roomId);
+        }
+      }
+    });
   });
-
 });
+
 
 connectDB()
   .then( () => {
@@ -57,23 +85,3 @@ connectDB()
   .catch((error) => {
     console.log("MongoDB connection failed!!! (from src/index.js) : ", error)
   })
-
-
-// import express from 'express'
-// const app = express()
-
-// ;( async () => {
-//   try {
-//     mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`)
-//     app.on("error", (error) => {
-//       console.log("ERROR: ", error);
-//       throw error
-//     })
-//     app.listen(process.env.PORT, () => {
-//       console.log(`App is listning on port ${process.env.PORT}`);
-//     })
-//   } catch (error) {
-//     console.log("ERROR: ", error)
-//     throw error
-//   }
-// })()

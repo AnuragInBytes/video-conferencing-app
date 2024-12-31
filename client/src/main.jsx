@@ -39,9 +39,7 @@ const router = createBrowserRouter([
         path: '/',
         element: (
           <ProtectedRoute authentication>
-            <SocketProvider>
-              <HomePage />
-            </SocketProvider>
+            <HomePage />
           </ProtectedRoute>
         ),
         children: [
@@ -71,7 +69,9 @@ const router = createBrowserRouter([
         path: '/room/:roomId',
         element: (
           <ProtectedRoute authentication>
-            <RoomPage />
+            <SocketProvider>
+              <RoomPage />
+            </SocketProvider>
           </ProtectedRoute>
         )
       }
