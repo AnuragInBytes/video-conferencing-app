@@ -12,7 +12,6 @@ import store from './redux/store.js';
 import { HomePage, SignInPage, SignUpPage, RoomPage } from "./pages"
 import { Upcoming, Recordings, Previous, PersonalRoom, Home } from './components/index.js'
 //socket provider
-import { SocketProvider } from './context/socketContext.jsx'
 
 const router = createBrowserRouter([
   {
@@ -69,9 +68,7 @@ const router = createBrowserRouter([
         path: '/room/:roomId',
         element: (
           <ProtectedRoute authentication>
-            <SocketProvider>
-              <RoomPage />
-            </SocketProvider>
+            <RoomPage />
           </ProtectedRoute>
         )
       }
