@@ -15,6 +15,7 @@ export { default as Recordings } from './root/recordings/Recordings'
 export { default as Previous } from './root/previous/Previous'
 export { default as PersonalRoom } from './root/personalRoom/PersonalRoom'
 export { default as Room } from './root/Meeting/Room'
+// export { deafult as VideoCall } from './root/Meeting/Room'
 
 
 //shared exports
